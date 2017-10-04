@@ -559,8 +559,7 @@ public class RoleBasedAuthorizationStrategy extends AuthorizationStrategy {
      */
     @CheckForNull
     public static RoleBasedAuthorizationStrategy getInstance() {
-        final Jenkins jenkins = Jenkins.getInstance();
-        final AuthorizationStrategy authStrategy= jenkins != null ? jenkins.getAuthorizationStrategy() : null;
+        final AuthorizationStrategy authStrategy= Jenkins.getInstance().getAuthorizationStrategy();
         if (authStrategy instanceof RoleBasedAuthorizationStrategy) {
             return (RoleBasedAuthorizationStrategy)authStrategy;
         }
@@ -592,7 +591,8 @@ public class RoleBasedAuthorizationStrategy extends AuthorizationStrategy {
      * @since 2.2.0
      */
     public static boolean isCreateAllowed(){
-        return Jenkins.getVersion().isNewerThan(new VersionNumber("1.566"));
+        VersionNumber version = Jenkins.getVersion();
+        return version != null && version.isNewerThan(new VersionNumber("1.566"));
     }
 
   /**

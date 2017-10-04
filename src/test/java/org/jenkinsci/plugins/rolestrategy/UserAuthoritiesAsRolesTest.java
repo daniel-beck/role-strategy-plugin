@@ -24,6 +24,25 @@ import org.springframework.dao.DataAccessException;
 
 public class UserAuthoritiesAsRolesTest {
 
+    public static class TestRealm extends AbstractPasswordBasedSecurityRealm {
+
+        @Override
+        protected UserDetails authenticate(String username, String password) throws AuthenticationException {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException, DataAccessException {
+            return new org.acegisecurity.userdetails.User(username, "", true, true, true, true, new GrantedAuthority[]{new GrantedAuthorityImpl("USERS")});
+        }
+
+        @Override
+        public GroupDetails loadGroupByGroupname(String groupname) throws UsernameNotFoundException, DataAccessException {
+            throw new UnsupportedOperationException();
+        }
+
+    }
+
     @Rule public JenkinsRule j = new JenkinsRule();
 
     @Before
@@ -38,24 +57,7 @@ public class UserAuthoritiesAsRolesTest {
     
     @LocalData
     @Test public void testRoleAuthority() throws Exception {
-        j.jenkins.setSecurityRealm(new AbstractPasswordBasedSecurityRealm() {
-
-            @Override
-            protected UserDetails authenticate(String username, String password) throws AuthenticationException {
-                throw new UnsupportedOperationException();
-            }
-
-            @Override
-            public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException, DataAccessException {
-                return new org.acegisecurity.userdetails.User(username, "", true, true, true, true, new GrantedAuthority[] {new GrantedAuthorityImpl("USERS")});
-            }
-
-            @Override
-            public GroupDetails loadGroupByGroupname(String groupname) throws UsernameNotFoundException, DataAccessException {
-                throw new UnsupportedOperationException();
-            }
-
-        });
+        j.jenkins.setSecurityRealm(new TestRealm());
 
         SecurityContext seccon = SecurityContextHolder.getContext();
         Authentication orig = seccon.getAuthentication();

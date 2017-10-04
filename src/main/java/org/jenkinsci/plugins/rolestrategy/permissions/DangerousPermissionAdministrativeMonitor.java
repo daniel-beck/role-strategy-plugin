@@ -80,10 +80,6 @@ public class DangerousPermissionAdministrativeMonitor extends AdministrativeMoni
     
     @CheckForNull
     public static DangerousPermissionAdministrativeMonitor getInstance() {
-        Jenkins j = Jenkins.getInstance();
-        if (j == null) {
-            return null;
-        }
-        return j.getExtensionList(AdministrativeMonitor.class).get(DangerousPermissionAdministrativeMonitor.class);
+        return Jenkins.getInstance().getExtensionList(AdministrativeMonitor.class).get(DangerousPermissionAdministrativeMonitor.class);
     }
 }
